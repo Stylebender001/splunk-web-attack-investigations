@@ -1,0 +1,9 @@
+# Reflected XSS detection
+index=xss-investigation
+| regex _raw="(?i)(<script|%3cscript|alert%28|javascript:)"
+| table _time clientip method status uri
+
+# More specific encoded payload search
+index=xss-investigation
+| regex _raw="(?i)(%3cscript%3e|alert%281%29)"
+| stats count by clientip, method, status, uri

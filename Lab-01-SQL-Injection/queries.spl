@@ -1,0 +1,17 @@
+# Index verification
+index=sqli-investigation
+| stats count by sourcetype, source
+
+# SQL injection keyword detection
+index=sqli-investigation
+| regex _raw="(?i)(OR|UNION|SELECT|SLEEP|BENCHMARK)"
+| table _time _raw
+
+# Extracted request fields
+index=sqli-investigation
+| table _time clientip method status id
+
+# Filter suspicious URL parameter
+index=sqli-investigation
+| search id="*OR*"
+| table _time clientip method status id

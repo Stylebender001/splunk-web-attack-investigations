@@ -1,0 +1,20 @@
+# Identify failed SSH password attempts
+index=ssh-investigation "Failed password"
+| table _time host source sourcetype _raw
+
+# Review SSH-related events
+index=ssh-investigation
+| search "sshd"
+| table _time _raw
+
+# Identify detailed authentication failures
+index=ssh-investigation
+| search "Failed password" OR "authentication failure"
+| table _time _raw
+
+# Extract source IP and username
+index=ssh-investigation
+| search "Failed password" OR "authentication failure" OR "more authentication failures"
+| rex field=_raw "(?:from|rhost=)(?<src_ip>\d{1,3}(?:\.\d{1,3}){3})"
+| rex field=_raw "(?:for|user=)(?<username>\S+)"
+| stats count by src_ip username

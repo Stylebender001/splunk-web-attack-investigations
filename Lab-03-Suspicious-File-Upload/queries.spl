@@ -1,0 +1,4 @@
+# Identify upload endpoint and uploaded file access
+index=file-upload
+| search uri="/dvwa/vulnerabilities/upload/" OR uri="*lab03-test.php*"
+| stats count by clientip, method, status, uri
